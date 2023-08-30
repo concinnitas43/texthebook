@@ -1,0 +1,41 @@
+import re
+
+file_path = "parsing.txt"
+output_file_path = "parsed.txt"
+
+with open(file_path, 'r', encoding='utf-8') as file, open(output_file_path, 'w', encoding='utf-8') as output_file:
+
+    local_view = ["", "", ""]
+
+    for line in file:
+
+        if len(local_view) <= 3:
+            local_view.append(line.strip())
+
+        if len(local_view) >= 3+1:
+            output_file.write(local_view.pop(0) + '\n')
+        else:
+            continue
+
+        if re.match(r'^\d+$',local_view[2].strip()):
+            local_view.pop(2)
+            if re.match(r'.*Gaslighting$', local_view[1].strip()):
+                local_view[1] = str(local_view[0][:-len("Gaslighting")]).strip()
+            elif local_view[0].strip().startswith("Chapter"):
+                local_view = []
+            continue
+
+        if ((len(local_view[1]) >= 1) and (local_view[1][-1] in [".", ",", "!", "?"]) and (len(local_view[1]) <= 55)):
+            local_view.insert(2, "")
+
+            if (len(local_view[3].split(" ")) <= 6):
+                local_view[3] = "\\section{" + local_view[3].strip() + "}"
+            continue
+
+        if (local_view[1].endswith("-")):
+            # delete the last sliced word of local view 1 and append it to the start of local view 2
+            local_view[1] = local_view[1][:-1]
+            local_view[2] = local_view[1].split(" ")[-1] + local_view[2]
+            local_view[1] = " ".join(local_view[1].split(" ")[:-1])
+
+

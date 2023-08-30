@@ -1,0 +1,20 @@
+import PyPDF2
+
+def extract_text_from_pdf(pdf_path):
+    text = ""
+    with open(pdf_path, 'rb') as pdf_file:
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
+        for page_num in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_num]
+            text += page.extract_text()
+    return text
+
+pdf_path = 'gaslight.pdf'
+extracted_text = extract_text_from_pdf(pdf_path)
+print(extracted_text)
+
+output_file_path = 'gaslight_extracted.txt'
+with open(output_file_path, 'w', encoding='utf-8') as output_file:
+    output_file.write(extracted_text)
+
+print(f"Extracted text saved to '{output_file_path}'")
